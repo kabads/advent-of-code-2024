@@ -1,58 +1,48 @@
-def read_reports(file_path):
-    with open(file_path, "r") as file:
-        lines = file.readlines()
+def is_safe(report):
+    if not report:
+        return False
 
-    reports = []
-    for line in lines:
-        row = list(map(int, line.strip().split()))
-        reports.append(row)
+    increasing = decreasing = True
 
-    return reports
-
-
-def increasing(numbers):
-    if len(numbers) < 2:
-        return True
-
-    for i in range(1, len(numbers)):
-        if numbers[i] <= numbers[i - 1]:
-            return False
-
-    return True
-
-
-def decreasing(numbers):
-    if len(numbers) < 2:
-        return True
-
-    for i in range(1, len(numbers)):
-        if numbers[i] >= numbers[i - 1]:
-            return False
-
-    return True
-
-
-def difference_test(report):
     for i in range(1, len(report)):
-        diff = abs(report[i] - report[i - 1])
-        if diff < 1 or diff > 3:
+        diff = report[i] - report[i - 1]
+        if not (1 <= abs(diff) <= 3):
             return False
-    return True
+        if diff > 0:
+            decreasing = False
+        elif diff < 0:
+            increasing = False
 
+    return increasing or decreasing
 
-def increase_decrease_safe_test(report):
-    return increasing(report) or decreasing(report)
+def is_safe_with_dampener(report):
+    if len(report) < 2:
+        return True
 
+    for i in range(len(report)):
+        modified_report = report[:i] + report[i+1:]
+        if is_safe(modified_report):
+            return True
 
-def main():
-    reports_list = read_reports("2-input.txt")
-    safe_count = sum(
-        1
-        for report in reports_list
-        if increase_decrease_safe_test(report) and difference_test(report)
-    )
-    print(safe_count)
+    return False
 
+def count_safe_reports(file_path):
+    with open(file_path, 'r') as file:
+        reports = file.readlines()
 
-if __name__ == "__main__":
-    main()
+    safe_count = 0
+    for report in reports:
+        levels = list(map(int, report.strip().split()))
+        if is_safe(levels) or is_safe_with_dampener(levels):
+            safe_count += 1
+
+    return safe_count
+
+if __name__ == '__main__':
+    import sys
+    if len(sys.argv) != 2:
+        print("Usage: python report.py <file_path>")
+    else:
+        file_path = sys.argv[1]
+        result = count_safe_reports(file_path)
+        print(result)

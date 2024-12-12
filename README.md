@@ -13,3 +13,4 @@
    - **day0602.py:** Calculates visited positions by a guard and valid new obstacle positions.
 7. **day0701.py:** Validates equations with addition and multiplication from a file.
    - **day0702.py:** Validates mathematical equations from a file and calculates a total count.
+8. **day0802.py:** Parses an antenna map and finds antinodes, excluding single frequency locations.
